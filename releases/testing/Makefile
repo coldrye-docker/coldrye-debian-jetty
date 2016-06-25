@@ -11,7 +11,7 @@ image = $(os)-$(feature)
 .PHONY: build fetch-latest push
 
 build: fetch-latest
-	docker build -t $(provider)/$(image)\:$(feature_version)-$(release)-$(tag) .
+	tar -czh . | docker build -t $(provider)/$(image)\:$(feature_version)-$(release)-$(tag) -
 	docker tag $(provider)/$(image)\:$(feature_version)-$(release)-$(tag) $(provider)/$(image)\:$(feature_version)-$(release)-latest
 
 fetch-latest:

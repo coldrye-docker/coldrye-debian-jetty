@@ -1,0 +1,7 @@
+# Derived images can use this to add to the below defined options
+# instead of providing the required jetty9/... defaults file under
+# /etc/defaults
+
+# Additional options to pass to the JVM
+#JAVA_OPTIONS_EXTRA=
+
