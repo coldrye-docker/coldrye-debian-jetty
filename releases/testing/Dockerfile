@@ -1,4 +1,4 @@
-FROM coldrye/debian-openjdk-headless:8-testing-latest
+FROM coldrye/debian-jdk-headless:8-testing-latest
 
 MAINTAINER Carsten Klein <trancesilken@gmail.com>
 

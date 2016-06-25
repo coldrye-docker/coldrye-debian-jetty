@@ -1,4 +1,4 @@
-FROM coldrye/debian-openjdk-headless:8-jessie-latest
+FROM coldrye/debian-jdk-headless:8-jessie-latest
 
 MAINTAINER Carsten Klein <trancesilken@gmail.com>
 
