@@ -1,0 +1,18 @@
+# Run Jetty as this user ID (default: jetty)
+# Set this to an empty string to prevent Jetty from starting automatically
+JETTY_USER=root
+
+# The home directory of the Java Runtime Environment (JRE). You need at least
+# Java 6. If JAVA_HOME is not set, some common directories for OpenJDK and
+# the Oracle JDK are tried.
+#JAVA_HOME=
+
+# Extra options to pass to the JVM
+JAVA_OPTIONS="-Xmx256m -Djava.awt.headless=true"
+
+# Timeout in seconds for the shutdown of all webapps
+#JETTY_SHUTDOWN=30
+
+# Additional arguments to pass to Jetty
+#JETTY_ARGS=
+

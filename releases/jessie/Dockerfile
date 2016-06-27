@@ -2,21 +2,28 @@ FROM coldrye/debian-jdk-headless:8-jessie-latest
 
 MAINTAINER Carsten Klein <trancesilken@gmail.com>
 
-RUN set -x \
-    && export APT_LISTCHANGES_FRONTEND=none \
-    && apt-get update \
-    && apt-get -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -t jessie-backports install jetty9 \
-    && rm -Rf /var/lib/jetty9/webapps/root \
-    && ln -s /usr/share/jetty9 /usr/share/jetty \
-    && ln -s /var/lib/jetty9 /var/lib/jetty \
-    && ln -s /usr/share/jetty/lib/ext /var/lib/jetty/ \
-    && apt-get clean \
-    && rm -Rf /var/lib/apt/lists/* 2>/dev/null
+ARG FEATURE_VERSION=
 
-ADD ["./etc/default/jetty9", "/etc/default/"]
-ADD ["./etc/default/jetty.extra", "/etc/default/"]
-ADD ["./etc/init.d/jetty9", "/etc/init.d/"]
+RUN test -z "$FEATURE_VERSION" && echo "FEATURE_VERSION missing" && exit 1 || true
+
+RUN set -x \
+    && export DIST_TMP=$(mktemp -d) \
+    && export DIST_NAME=jetty-distribution-$FEATURE_VERSION \
+    && export JETTY_HOME=/usr/share/jetty \
+    && curl -fSL https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/$FEATURE_VERSION/$DIST_NAME.tar.gz -o $DIST_TMP/$DIST_NAME.tar.gz \
+    && cd $DIST_TMP \
+    && tar xzf ./$DIST_NAME.tar.gz \
+    && mv $DIST_NAME $JETTY_HOME \
+    && ln -s $JETTY_HOME/etc /etc/jetty \
+    && ln -s $JETTY_HOME/logs /var/log/jetty \
+    && mkdir /var/lib/jetty \
+    && ln -s $JETTY_HOME/webapps /var/lib/jetty/ \
+    && ln -s $JETTY_HOME/lib/ext /var/lib/jetty/ \
+    && rm -Rf $DIST_TMP
+
+ADD ["./etc/default/jetty", "/etc/default/"]
+ADD ["./run.sh", "/run.sh"]
 
 # this must not detach
-CMD ["service", "jetty9", "start"]
+CMD /run.sh start
 

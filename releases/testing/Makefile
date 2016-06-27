@@ -1,23 +1,36 @@
 # vim: noexpandtab:ts=4:sw=4
 
+SHELL=/bin/bash
+
 provider = coldrye
 os = debian
 release = testing
 feature = jetty
-feature_version = 9
+feature_version = 9.3.9.v20160517 9.4.0.M0
 tag := $(shell date +"%Y%m%d%H%M%S")
 image = $(os)-$(feature)
 
 .PHONY: build fetch-latest push
 
 build: fetch-latest
-	tar -czh . | docker build -t $(provider)/$(image)\:$(feature_version)-$(release)-$(tag) -
-	docker tag $(provider)/$(image)\:$(feature_version)-$(release)-$(tag) $(provider)/$(image)\:$(feature_version)-$(release)-latest
+	for version in $(feature_version); do \
+	  export relver=$${version//.[Mv]*/}; \
+	  tar -czh . | docker build --build-arg FEATURE_VERSION=$$version -t $(provider)/$(image)\:$${relver//./-}-$(release)-$(tag) - && \
+	  docker tag $(provider)/$(image)\:$${relver//./-}-$(release)-$(tag) $(provider)/$(image)\:$${relver//./-}-$(release)-latest; \
+	done
 
 fetch-latest:
-	docker pull $(provider)/$(image):$(feature_version)-$(release)-latest || true
+	for version in $(feature_version); do \
+	  export relver=$${version//.[Mv]*/}; \
+	  tar -czh . | docker build --build-arg FEATURE_VERSION=$$version -t $(provider)/$(image)\:$${relver//./-}-$(release)-$(tag) - && \
+	  docker pull $(provider)/$(image):$${relver//./-}-$(release)-latest || true; \
+	done
 
 push: build
-	docker push $(provider)/$(image)\:$(feature_version)-$(release)-$(tag)
-	docker push $(provider)/$(image)\:$(feature_version)-$(release)-latest
+	for version in $(feature_version); do \
+	  export relver=$${version//.[Mv]*/}; \
+	  tar -czh . | docker build --build-arg FEATURE_VERSION=$$version -t $(provider)/$(image)\:$${relver//./-}-$(release)-$(tag) - && \
+	  docker push $(provider)/$(image)\:$${relver//./-}-$(release)-$(tag) && \
+	  docker push $(provider)/$(image)\:$${relver//./-}-$(release)-latest; \
+	done
 
