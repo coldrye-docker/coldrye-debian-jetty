@@ -15,22 +15,25 @@ image = $(os)-$(feature)
 build: fetch-latest
 	for version in $(feature_version); do \
 	  export relver=$${version//.[Mv]*/}; \
-	  tar -czh . | docker build --build-arg FEATURE_VERSION=$$version -t $(provider)/$(image)\:$${relver//./-}-$(release)-$(tag) - && \
-	  docker tag $(provider)/$(image)\:$${relver//./-}-$(release)-$(tag) $(provider)/$(image)\:$${relver//./-}-$(release)-latest; \
+	  export hrelver=$${relver//./-}; \
+	  tar -czh . | docker build --build-arg FEATURE_VERSION=$$version -t $(provider)/$(image)\:$${hrelver}-$(release)-$(tag) - && \
+	  docker tag $(provider)/$(image)\:$${hrelver}-$(release)-$(tag) $(provider)/$(image)\:$${hrelver}-$(release)-latest; \
 	done
 
 fetch-latest:
 	for version in $(feature_version); do \
 	  export relver=$${version//.[Mv]*/}; \
-	  tar -czh . | docker build --build-arg FEATURE_VERSION=$$version -t $(provider)/$(image)\:$${relver//./-}-$(release)-$(tag) - && \
-	  docker pull $(provider)/$(image):$${relver//./-}-$(release)-latest || true; \
+	  export hrelver=$${relver//./-}; \
+	  tar -czh . | docker build --build-arg FEATURE_VERSION=$$version -t $(provider)/$(image)\:$${hrelver}-$(release)-$(tag) - && \
+	  docker pull $(provider)/$(image):$${hrelver}-$(release)-latest || true; \
 	done
 
 push: build
 	for version in $(feature_version); do \
 	  export relver=$${version//.[Mv]*/}; \
-	  tar -czh . | docker build --build-arg FEATURE_VERSION=$$version -t $(provider)/$(image)\:$${relver//./-}-$(release)-$(tag) - && \
-	  docker push $(provider)/$(image)\:$${relver//./-}-$(release)-$(tag) && \
-	  docker push $(provider)/$(image)\:$${relver//./-}-$(release)-latest; \
+	  export hrelver=$${relver//./-}; \
+	  tar -czh . | docker build --build-arg FEATURE_VERSION=$$version -t $(provider)/$(image)\:$${hrelver}-$(release)-$(tag) - && \
+	  docker push $(provider)/$(image)\:$${hrelver}-$(release)-$(tag) && \
+	  docker push $(provider)/$(image)\:$${hrelver}-$(release)-latest; \
 	done
 
