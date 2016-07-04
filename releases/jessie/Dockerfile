@@ -6,6 +6,8 @@ ARG FEATURE_VERSION=
 
 RUN test -z "$FEATURE_VERSION" && echo "FEATURE_VERSION missing" && exit 1 || true
 
+EXPOSE 8080/tcp
+
 RUN set -x \
     && export DIST_TMP=$(mktemp -d) \
     && export DIST_NAME=jetty-distribution-$FEATURE_VERSION \
