@@ -6,7 +6,7 @@ provider = coldrye
 os = debian
 release = jessie
 feature = jetty
-feature_version = 9.3.9.v20160517 9.4.0.M0
+feature_version = 9.4.2.v20170220
 tag := $(shell date +"%Y%m%d%H%M%S")
 image = $(os)-$(feature)
 
